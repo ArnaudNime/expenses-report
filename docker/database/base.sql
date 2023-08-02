@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "user"
+CREATE TABLE IF NOT EXISTS commercial
 (
     id            serial primary key,
     lastname      varchar(80)        not null,
@@ -8,8 +8,6 @@ CREATE TABLE IF NOT EXISTS "user"
     creation_date timestamp          not null
 );
 
-CREATE UNIQUE INDEX user_idx ON "user" (id);
-
 CREATE TABLE IF NOT EXISTS expense_report
 (
     id            serial primary key,
@@ -17,13 +15,12 @@ CREATE TABLE IF NOT EXISTS expense_report
     type          varchar(80) not null,
     payment_date  date        not null,
     company       int         not null,
-    "user"          int         not null,
+    commercial        int         not null,
     creation_date timestamp   not null
 );
 
-CREATE UNIQUE INDEX expense_report_idx ON "expense_report" (id);
-CREATE UNIQUE INDEX expense_report_company_idx ON expense_report (company);
-CREATE UNIQUE INDEX expense_report_user_idx ON "expense_report" ("user");
+CREATE INDEX expense_report_company_idx ON expense_report (company);
+CREATE INDEX expense_report_user_idx ON "expense_report" ("commercial");
 
 CREATE TABLE IF NOT EXISTS company
 (
@@ -32,5 +29,3 @@ CREATE TABLE IF NOT EXISTS company
     email         varchar(80) not null,
     creation_date timestamp   not null
 );
-
-CREATE UNIQUE INDEX commpany_idx ON "company" (id);
