@@ -4,50 +4,89 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use DateTime;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use DateTimeImmutable;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
-        new Get(),
+        new Get(
+            uriTemplate: '/commercial/{id}',
+            requirements: ['id' => '\d+'],
+        ),
         new GetCollection(),
+        new Post(
+            uriTemplate: '/commercial',
+        ),
+        new Put(
+            uriTemplate: '/commercial/{id}',
+            requirements: ['id' => '\d+'],
+        ),
+        new Delete(
+            uriTemplate: '/commercial/{id}',
+            requirements: ['id' => '\d+'],
+        ),
     ],
 )]
 #[ORM\Entity]
-final class Commercial
+class Commercial
 {
+    use EntityTechnicalTrait;
+
     #[ORM\Id, ORM\Column, ORM\GeneratedValue]
+    #[Groups('expense')]
     private int $id;
 
     #[ORM\Column]
     #[Assert\NotBlank]
-    private string $name;
+    #[Assert\Length(max: 80)]
+    #[Groups('expense')]
+    private string $firstname;
 
     #[ORM\Column]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 80)]
+    #[Groups('expense')]
     private string $lastname;
 
     #[ORM\Column]
+    #[Assert\LessThan('today')]
     #[Assert\NotBlank]
-    private DateTime $birthdate;
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
+    private DateTimeImmutable $birthdate;
 
     #[ORM\Column]
     #[Assert\NotBlank]
+    #[Assert\Email]
+    #[Assert\Length(max: 80)]
+    #[Groups('expense')]
     private string $email;
-    #[ORM\Column]
-    #[Assert\NotBlank]
-    private DateTime $creationDate;
+
+    #[ORM\OneToMany(mappedBy: 'commercial', targetEntity: Expense_report::class)]
+    private Collection $expenseReports;
+
+    public function __construct()
+    {
+        $this->setCreationDate();
+    }
+
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): string
+    public function getFirstname(): string
     {
-        return $this->name;
+        return $this->firstname;
     }
 
     public function getLastname(): string
@@ -55,7 +94,7 @@ final class Commercial
         return $this->lastname;
     }
 
-    public function getBirthdate(): DateTime
+    public function getBirthdate(): DateTimeImmutable
     {
         return $this->birthdate;
     }
@@ -65,8 +104,23 @@ final class Commercial
         return $this->email;
     }
 
-    public function getCreationDate(): DateTime
+    public function setFirstname(string $firstname): void
     {
-        return $this->creationDate;
+        $this->firstname = $this->formatString($firstname);
+    }
+
+    public function setLastname(string $lastname): void
+    {
+        $this->lastname = $this->formatString($lastname);
+    }
+
+    public function setBirthdate(DateTimeImmutable $birthdate): void
+    {
+        $this->birthdate = $birthdate;
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->email = $this->formatString($email);
     }
 }
