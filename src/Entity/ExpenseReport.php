@@ -26,10 +26,11 @@ use Symfony\Component\Validator\Constraints as Assert;
             normalizationContext: ['groups' => ['expense']],
         ),
         new GetCollection(
+            uriTemplate: '/expense-reports',
             normalizationContext: ['groups' => ['expense']],
         ),
         new Post(
-            uriTemplate: '/expense-reports',
+            uriTemplate: '/expense-report',
             requirements: ['id' => '\d+'],
         ),
         new Put(

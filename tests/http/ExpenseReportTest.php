@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Tests\http;
 
-use App\Entity\Commercial;
+use App\Entity\Enum\ExpenseReportsType;
+use App\Entity\ExpenseReport;
 use JsonException;
-use PDO;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -13,40 +13,39 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
- * @see Commercial
+ * @see ExpenseReport
  */
-class CommercialTest extends AbstractTestHttp
+class ExpenseReportTest extends AbstractTestHttp
 {
     /**
      * @throws TransportExceptionInterface
      */
-    public function testGetCommercialsWhenUnauthorized(): void
+    public function testGetExpenseReportsWhenUnauthorized(): void
     {
-        $this->createDummyClient()->request('GET', '/commercials');
+        $this->createDummyClient()->request('GET', '/expense-reports');
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 
     /**
      * @throws TransportExceptionInterface
      */
-    public function testGetCommercialsWhenAuthorized(): void
+    public function testGetExpenseReportsWhenAuthorized(): void
     {
-        $this->createClientWithBasicAuthentification()->request('GET', '/commercials');
+        $this->createClientWithBasicAuthentification()->request('GET', '/expense-reports');
         self::assertResponseIsSuccessful();
     }
 
-
     /**
      * @throws TransportExceptionInterface
-     * @dataProvider CodesNotAllowedForRouteCommercials
+     * @dataProvider CodesNotAllowedForRouteExpenseReports
      */
-    public function testRouteCommercilasWhenNotAllowed(string $httpCode): void
+    public function testRouteExpenseReportsWhenNotAllowed(string $httpCode): void
     {
-        $this->createClientWithBasicAuthentification()->request($httpCode, '/commercials');
+        $this->createClientWithBasicAuthentification()->request($httpCode, '/expense-reports');
         self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED, '');
     }
 
-    public static function CodesNotAllowedForRouteCommercials(): array
+    public static function CodesNotAllowedForRouteExpenseReports(): array
     {
         return [
             ['POST'],
@@ -59,17 +58,17 @@ class CommercialTest extends AbstractTestHttp
 
     /**
      * @throws TransportExceptionInterface
-     * @dataProvider CodesNotAllowedForRouteCommercial
+     * @dataProvider CodesNotAllowedForRouteExpenseReport
      */
-    public function testRouteCommercialWhenNotAllowed(string $httpCode): void
+    public function testRouteExpenseReportWhenNotAllowed(string $httpCode): void
     {
-        $this->createClientWithBasicAuthentification()->request($httpCode, '/commercial');
+        $this->createClientWithBasicAuthentification()->request($httpCode, '/expense-report');
         self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED, '');
     }
 
-    public static function CodesNotAllowedForRouteCommercial(): array
+    public static function CodesNotAllowedForRouteExpenseReport(): array
     {
-        
+
         return [
             ['GET'],
             ['PATCH'],
@@ -81,19 +80,18 @@ class CommercialTest extends AbstractTestHttp
 
     /**
      * @throws TransportExceptionInterface
-     * @dataProvider CodesNotAllowedForRouteCommercialWithId
+     * @dataProvider CodesNotAllowedForRouteExpenseReportWithId
      */
-    public function testRouteCommercialWithIdWhenNotAllowed(string $httpCode): void
+    public function testRouteExpenseReportWithIdWhenNotAllowed(string $httpCode): void
     {
-        $this->createClientWithBasicAuthentification()->request($httpCode, '/commercial/1');
+        $this->createClientWithBasicAuthentification()->request($httpCode, '/expense-report/1');
         self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED, '');
     }
 
-    public static function CodesNotAllowedForRouteCommercialWithId(): array
+    public static function CodesNotAllowedForRouteExpenseReportWithId(): array
     {
         return [
             ['POST'],
-            ['PATCH'],
             ['OPTIONS'],
         ];
     }
@@ -101,90 +99,91 @@ class CommercialTest extends AbstractTestHttp
     /**
      * @throws TransportExceptionInterface
      */
-    public function testPostCommercialWhenUnauthorized(): void
+    public function testPostExpenseReportWhenUnauthorized(): void
     {
-        $this->createDummyClient()->request('POST', '/commercial', [
+        $this->createDummyClient()->request('POST', '/expense-report', [
             "json" => [
-                "firstname" => 'test',
-                "lastname" => 'test',
-                "birthdate" => '1990-12-17',
-                "email" => 'test@test.test',
+                "amount" => 10,
+                "type" => ExpenseReportsType::Meat,
+                "company" => '/company/4',
+                "commercial" => '/commercial/3',
+                "payment_date" => '2023-08-11',
             ],
         ]);
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 
     /**
+     * @dataProvider getExpenseReportsType
      * @throws TransportExceptionInterface
      */
-    public function testPostCommercialWhenAuthorized(): void
+    public function testPostExpenseReportWhenAuthorized(float $amount, ExpenseReportsType $type): void
     {
-        $this->createClientWithBasicAuthentification()->request('POST', '/commercial', [
+        $this->createClientWithBasicAuthentification()->request('POST', '/expense-report', [
             "json" => [
-                "firstname" => 'test',
-                "lastname" => 'test',
-                "birthdate" => '1990-12-17',
-                "email" => 'test@test.test',
+                "amount" => $amount,
+                "type" => $type,
+                "company" => '/company/4',
+                "commercial" => '/commercial/3',
+                "payment_date" => '2023-08-11',
             ],
         ]);
+        self::assertResponseIsSuccessful();
+    }
+
+    public static function getExpenseReportsType(): array
+    {
+        return [
+            [10, ExpenseReportsType::Meat],
+            [60, ExpenseReportsType::Gazoline],
+            [20.25, ExpenseReportsType::Toll],
+            [100, ExpenseReportsType::Conference],
+        ];
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function testGetExpenseReportWhenAuthorized(): void
+    {
+        $this->createClientWithBasicAuthentification()->request('GET', '/expense-report/1');
         self::assertResponseIsSuccessful();
     }
 
     /**
      * @throws TransportExceptionInterface
      */
-    public function testGetCommercialWhenAuthorized(): void
+    public function testPostExpenseReportWhenUnknownCompany(): void
     {
-        $this->createClientWithBasicAuthentification()->request('GET', '/commercial/1');
-        self::assertResponseIsSuccessful();
+
+        $this->createClientWithBasicAuthentification()->request('POST', '/expense-report', [
+            "json" => [
+                "amount" => 10,
+                "type" => ExpenseReportsType::Meat,
+                "company" => '/company/1',
+                "commercial" => '/commercial/3',
+                "payment_date" => '2023-08-11',
+            ],
+        ]);
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
     /**
      * @throws TransportExceptionInterface
      */
-    public function testPostCommercialWhenDuplicateEmail(): void
+    public function testPostExpenseReportWhenUnknownCommercial(): void
     {
-        $this->createClientWithBasicAuthentification()->request('POST', '/commercial', [
-            "json" => [
-                "firstname" => 'test2',
-                "lastname" => 'test2',
-                "birthdate" => '1990-12-17',
-                "email" => 'test@test.test',
-            ],
-        ]);
-        self::assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
-    }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
-    public function testPostCommercialWhenBirthdateIsNotLogical(): void
-    {
-        $this->createClientWithBasicAuthentification()->request('POST', '/commercial', [
+        $this->createClientWithBasicAuthentification()->request('POST', '/expense-report', [
             "json" => [
-                "firstname" => 'test2',
-                "lastname" => 'test2',
-                "birthdate" => '2045-12-17',
-                "email" => 'test@test.test',
+                "amount" => 10,
+                "type" => ExpenseReportsType::Meat,
+                "company" => '/company/4',
+                "commercial" => '/commercial/1',
+                "payment_date" => '2023-08-11',
             ],
         ]);
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
-    }
-
-    /**
-     * @throws TransportExceptionInterface
-     */
-    public function testPostSecondCommercialWhenAuthorized(): void
-    {
-        $this->createClientWithBasicAuthentification()->request('POST', '/commercial', [
-            "json" => [
-                "firstname" => 'test2',
-                "lastname" => 'test2',
-                "birthdate" => '1990-12-17',
-                "email" => 'test2@test.test',
-            ],
-        ]);
-        self::assertResponseIsSuccessful();
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -195,12 +194,12 @@ class CommercialTest extends AbstractTestHttp
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function testCountOfGetCommercialsWhenAuthorized(): void
+    public function testCountOfGetExpenseReportsWhenAuthorized(): void
     {
-        $response = $this->createClientWithBasicAuthentification()->request('GET', '/commercials');
+        $response = $this->createClientWithBasicAuthentification()->request('GET', '/expense-reports');
         $body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         self::assertIsArray($body);
-        self::assertCount(2, $body);
+        self::assertCount(4, $body);
 
         self::assertResponseIsSuccessful();
     }
@@ -208,14 +207,15 @@ class CommercialTest extends AbstractTestHttp
     /**
      * @throws TransportExceptionInterface
      */
-    public function testPutCommercialWhenUnauthorized(): void
+    public function testPutExpenseReportWhenUnauthorized(): void
     {
-        $this->createDummyClient()->request('PUT', '/commercial/1', [
+        $this->createDummyClient()->request('PUT', '/expense-report/2', [
             "json" => [
-                "firstname" => 'test2',
-                "lastname" => 'test4',
-                "birthdate" => '1990-12-17',
-                "email" => 'test2@test.test',
+                "amount" => 50,
+                "type" => ExpenseReportsType::Gazoline,
+                "company" => '/company/4',
+                "commercial" => '/commercial/3',
+                "payment_date" => '2023-08-11',
             ],
         ]);
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
@@ -224,14 +224,15 @@ class CommercialTest extends AbstractTestHttp
     /**
      * @throws TransportExceptionInterface
      */
-    public function testPutCommercialWhenAuthorized(): void
+    public function testPutExpenseReportWhenAuthorized(): void
     {
-        $this->createClientWithBasicAuthentification()->request('PUT', '/commercial/1', [
+        $this->createClientWithBasicAuthentification()->request('PUT', '/expense-report/2', [
             "json" => [
-                "firstname" => 'test2',
-                "lastname" => 'test4',
-                "birthdate" => '1990-12-17',
-                "email" => 'test@test.test',
+                "amount" => 50,
+                "type" => ExpenseReportsType::Gazoline,
+                "company" => '/company/4',
+                "commercial" => '/commercial/3',
+                "payment_date" => '2023-08-11',
             ],
         ]);
         self::assertResponseIsSuccessful();
@@ -240,18 +241,44 @@ class CommercialTest extends AbstractTestHttp
     /**
      * @throws TransportExceptionInterface
      */
-    public function testDeleteSecondCommercialWhenUnauthorized(): void
+    public function testPatchExpenseReportWhenUnauthorized(): void
     {
-        $this->createDummyClient()->request('DELETE', '/commercial/1');
+        $this->createDummyClient()->request('PATCH', '/expense-report/2', [
+            "json" => [
+                "amount" => 55,
+            ],
+        ]);
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 
     /**
      * @throws TransportExceptionInterface
      */
-    public function testDeleteSecondCommercialWhenAuthorized(): void
+    public function testPatchExpenseReportWhenAuthorized(): void
     {
-        $this->createClientWithBasicAuthentification()->request('DELETE', '/commercial/1');
+        $this->createClientWithBasicAuthentification()->request('PUT', '/expense-report/2', [
+            "json" => [
+                "amount" => 55,
+            ],
+        ]);
+        self::assertResponseIsSuccessful();
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function testDeleteSecondExpenseReportWhenUnauthorized(): void
+    {
+        $this->createDummyClient()->request('DELETE', '/expense-report/1');
+        self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function testDeleteSecondExpenseReportWhenAuthorized(): void
+    {
+        $this->createClientWithBasicAuthentification()->request('DELETE', '/expense-report/1');
         self::assertResponseIsSuccessful();
     }
 }

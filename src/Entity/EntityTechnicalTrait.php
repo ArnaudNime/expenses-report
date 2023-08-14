@@ -10,7 +10,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Exception\InvalidArgumentException;
 use Throwable;
 
-
 trait EntityTechnicalTrait
 {
 
