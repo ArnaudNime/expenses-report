@@ -6,14 +6,13 @@ services:
     build:
       context: .
       dockerfile: docker/database/DockerFile
-#    volumes:
-#      - database_data:/var/lib/postgresql/data:rw
     ports:
       - "5432:5432"
-#  adminer:
-#    container_name: postgres-admin
-#    image: adminer
-#    ports:
-#      - "8080:8080"
-#volumes:
-#  database_data:
+  test_database:
+    container_name: postgres_test
+    build:
+      context: .
+      dockerfile: docker/database/DockerFile
+    ports:
+      - "5433:5432"
+
