@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Tests\http;
 
-use App\Entity\Enum\ExpenseReportsType;
 use App\Entity\ExpenseReport;
+use App\Entity\ExpenseReport\ExpenseReportsType;
 use JsonException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;

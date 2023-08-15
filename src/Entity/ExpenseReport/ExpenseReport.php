@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\ExpenseReport;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
@@ -10,7 +10,9 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
-use App\Entity\Enum\ExpenseReportsType;
+use App\Entity\Commercial;
+use App\Entity\Company;
+use App\Entity\EntityTechnicalTrait;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
@@ -46,7 +48,6 @@ use Symfony\Component\Validator\Constraints as Assert;
             requirements: ['id' => '\d+'],
         ),
     ],
-
 )]
 #[ORM\Entity]
 class ExpenseReport
