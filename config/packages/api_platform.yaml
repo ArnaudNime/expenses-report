@@ -1,4 +1,4 @@
 api_platform:
   name_converter: 'Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter'
-  formats:
-    json: [ 'application/json' ]
+#  formats:
+#    json: [ 'application/json' ]

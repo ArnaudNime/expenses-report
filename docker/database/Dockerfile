@@ -3,4 +3,4 @@ FROM postgres:bullseye
 ENV POSTGRES_DB=app
 ENV POSTGRES_USER=dev_user
 ENV POSTGRES_PASSWORD=dev_password
-COPY /docker/database/base.sql /docker-entrypoint-initdb.d/base.sql
+COPY /base.sql /docker-entrypoint-initdb.d/base.sql
