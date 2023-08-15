@@ -56,7 +56,7 @@ class Company
     #[Groups('expense')]
     private string $email;
 
-    #[ORM\OneToMany(mappedBy: 'company', targetEntity: Expense_report::class)]
+    #[ORM\OneToMany(mappedBy: 'company', targetEntity: ExpenseReport::class)]
     private Collection $expenseReports;
 
     public function __construct()

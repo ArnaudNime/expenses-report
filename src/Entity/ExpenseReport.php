@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new Get(
-            uriTemplate: '/expense_report/{id}',
+            uriTemplate: '/expense-report/{id}',
             requirements: ['id' => '\d+'],
             normalizationContext: ['groups' => ['expense']],
         ),
@@ -29,26 +29,26 @@ use Symfony\Component\Validator\Constraints as Assert;
             normalizationContext: ['groups' => ['expense']],
         ),
         new Post(
-            uriTemplate: '/expense_reports',
+            uriTemplate: '/expense-reports',
             requirements: ['id' => '\d+'],
         ),
         new Put(
-            uriTemplate: '/expense_report/{id}',
+            uriTemplate: '/expense-report/{id}',
             requirements: ['id' => '\d+'],
         ),
         new Patch(
-            uriTemplate: '/expense_report/{id}',
+            uriTemplate: '/expense-report/{id}',
             requirements: ['id' => '\d+'],
         ),
         new Delete(
-            uriTemplate: '/expense_report/{id}',
+            uriTemplate: '/expense-report/{id}',
             requirements: ['id' => '\d+'],
         ),
     ],
 
 )]
 #[ORM\Entity]
-class Expense_report
+class ExpenseReport
 {
     use EntityTechnicalTrait;
 
