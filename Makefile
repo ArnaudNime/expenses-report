@@ -13,3 +13,4 @@ test:
 fixtures:
 	docker exec -i postgres psql app -Udev_user < tests/fixtures/user_1.sql
 clear-cache:
+	docker exec php symfony console cache:clear
