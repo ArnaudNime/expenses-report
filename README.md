@@ -1,3 +1,35 @@
-> wget https://get.symfony.com/cli/installer -O - | bash
-> mv /home/tdeletraz/.symfony5/bin/symfony /usr/local/bin/symfony
-> composer create-project symfony/skeleton:"6.3.*" expense_reports_manager   (6.3.99)
+### API REST
+### WITH SYMFONY 5 / PHP 8.1 / API PLATEFORM 3.1 / POSTGRESL
+
+url : http://localhost:8080/
+
+login : DEV_PHP
+
+password : THE_GREAT_SECRET
+
+## Installation
+
+* need composer installed
+ 
+> make build
+
+## Launch API
+
+> make start
+
+## Add fixtures
+
+> make fixtures
+
+## Play unit tests and http tests
+
+> make test
+
+
+## Remove dev cache
+
+> make clear-cache
+
+## Stop API
+
+> make stop
