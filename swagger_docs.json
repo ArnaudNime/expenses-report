@@ -799,7 +799,7 @@
                     },
                     "birthdate": {
                         "type": "string",
-                        "format": "date-time"
+                        "format": "date"
                     },
                     "email": {
                         "format": "email",
@@ -936,16 +936,18 @@
                     "company": {
                         "type": "string",
                         "format": "iri-reference",
-                        "nullable": true
+                        "nullable": false,
+                        "example": "/company/1"
                     },
                     "commercial": {
                         "type": "string",
                         "format": "iri-reference",
-                        "nullable": true
+                        "nullable": false,
+                        "example": "/commercial/1"
                     },
                     "payment_date": {
                         "type": "string",
-                        "format": "date-time"
+                        "format": "date"
                     },
                     "creation_date": {
                         "readOnly": true,
@@ -1001,7 +1003,7 @@
                     },
                     "payment_date": {
                         "type": "string",
-                        "format": "date-time"
+                        "format": "date"
                     }
                 },
                 "required": [
@@ -1013,20 +1015,13 @@
                 ]
             },
             "ExpenseReportsType": {
-                "type": "object",
+                "type": "string",
                 "description": "",
                 "deprecated": false,
                 "properties": {
-                    "name": {
+                    "item": {
                         "readOnly": true,
                         "type": "string"
-                    },
-                    "value": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "cases": {
-                        "readOnly": true
                     }
                 }
             }
